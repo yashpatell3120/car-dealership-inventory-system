@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Oswald", ui-sans-serif, sans-serif;
+  --font-body: "Inter", ui-sans-serif, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-graphite-950: #0F1216;
+  --color-graphite-900: #14171C;
+  --color-graphite-800: #1B2029;
+  --color-graphite-700: #262C36;
+  --color-graphite-600: #333A47;
+  --color-graphite-500: #4A5262;
+  --color-graphite-300: #8B94A3;
+  --color-graphite-100: #D7DAE0;
+  --color-graphite-50: #EDEFF2;
+
+  --color-amber-500: #E8A33D;
+  --color-amber-400: #F0B860;
+  --color-amber-600: #C7842A;
+
+  --color-teal-500: #3E8E88;
+  --color-teal-400: #56A9A2;
+
+  --color-crimson-500: #D65A4A;
+  --color-crimson-400: #E17A6C;
+}
+
+body {
+  background-color: var(--color-graphite-900);
+  color: var(--color-graphite-50);
+  font-family: var(--font-body);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+}
+
+/* subtle diagonal hazard texture used sparingly as a signature accent */
+.hazard-edge {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--color-amber-500) 0px,
+    var(--color-amber-500) 10px,
+    var(--color-graphite-900) 10px,
+    var(--color-graphite-900) 20px
+  );
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-amber-400);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
