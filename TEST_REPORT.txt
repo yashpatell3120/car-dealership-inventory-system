@@ -2,81 +2,99 @@
 > car-dealership-backend@1.0.0 test:coverage
 > NODE_OPTIONS=--experimental-sqlite jest --runInBand --coverage
 
-(node:1080) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:932) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
-PASS tests/vehicles.test.ts
+PASS tests/vehicles.test.ts (5.966 s)
   Vehicle route authentication
     ✓ rejects unauthenticated requests to list vehicles (6 ms)
-    ✓ rejects requests with a malformed token (5 ms)
+    ✓ rejects requests with a malformed token (4 ms)
   POST /api/vehicles
-    ✓ allows an authenticated user to add a vehicle (13 ms)
+    ✓ allows an authenticated user to add a vehicle (14 ms)
     ✓ rejects a vehicle with missing required fields (5 ms)
-    ✓ rejects a negative price (4 ms)
+    ✓ rejects a negative price (3 ms)
   GET /api/vehicles
-    ✓ returns a list of vehicles (5 ms)
+    ✓ returns a list of vehicles (4 ms)
   GET /api/vehicles/search
-    ✓ filters by make (4 ms)
-    ✓ filters by category (3 ms)
-    ✓ filters by price range (4 ms)
+    ✓ filters by make (5 ms)
+    ✓ filters by category (4 ms)
+    ✓ filters by price range (53 ms)
   PUT /api/vehicles/:id
-    ✓ updates a vehicle (72 ms)
-    ✓ returns 404 for a non-existent vehicle (13 ms)
+    ✓ updates a vehicle (90 ms)
+    ✓ returns 404 for a non-existent vehicle (24 ms)
   DELETE /api/vehicles/:id
-    ✓ rejects deletion from a non-admin user (8 ms)
-    ✓ allows an admin to delete a vehicle (15 ms)
+    ✓ rejects deletion from a non-admin user (47 ms)
+    ✓ allows an admin to delete a vehicle (65 ms)
   POST /api/vehicles/:id/purchase
-    ✓ decreases quantity by 1 by default (14 ms)
-    ✓ rejects a purchase that would drive quantity negative (8 ms)
+    ✓ decreases quantity by 1 by default (17 ms)
+    ✓ rejects a purchase that would drive quantity negative (11 ms)
     ✓ returns 404 when purchasing a non-existent vehicle (3 ms)
   POST /api/vehicles/:id/restock
-    ✓ rejects restock from a non-admin user (8 ms)
-    ✓ allows an admin to restock a vehicle (12 ms)
+    ✓ rejects restock from a non-admin user (9 ms)
+    ✓ allows an admin to restock a vehicle (72 ms)
 
 PASS tests/auth.test.ts
   POST /api/auth/register
-    ✓ creates a new user and returns a token (152 ms)
+    ✓ creates a new user and returns a token (166 ms)
     ✓ rejects registration with an invalid email (3 ms)
-    ✓ rejects registration with a too-short password (2 ms)
-    ✓ rejects duplicate email registration (98 ms)
-    ✓ allows registering an admin user via role field (100 ms)
+    ✓ rejects registration with a too-short password (3 ms)
+    ✓ rejects duplicate email registration (90 ms)
+    ✓ allows registering an admin user via role field (91 ms)
   POST /api/auth/login
-    ✓ logs in with correct credentials (90 ms)
-    ✓ rejects an incorrect password (91 ms)
+    ✓ logs in with correct credentials (87 ms)
+    ✓ rejects an incorrect password (86 ms)
     ✓ rejects a non-existent email (3 ms)
+
+PASS tests/orders.test.ts
+  GET /api/orders
+    ✓ starts empty for a new user (5 ms)
+    ✓ records an order after a purchase (23 ms)
+    ✓ does not leak one user's orders to another user (88 ms)
+    ✓ lets an admin see all orders with ?all=true (3 ms)
+    ✓ ignores ?all=true for a non-admin user (only returns their own orders) (6 ms)
+
+PASS tests/sorting.test.ts
+  GET /api/vehicles with sorting
+    ✓ sorts by price ascending (4 ms)
+    ✓ sorts by price descending (2 ms)
+    ✓ sorts by make alphabetically (2 ms)
+    ✓ ignores an invalid sortBy value and falls back to default sort (3 ms)
+    ✓ applies sorting to search results too (3 ms)
 
 PASS tests/vehicleRepository.test.ts
   vehicleRepository
-    ✓ creates a vehicle and assigns it an id (44 ms)
+    ✓ creates a vehicle and assigns it an id (36 ms)
     ✓ finds a vehicle by id (4 ms)
-    ✓ returns undefined for a missing vehicle
-    ✓ updates only the provided fields (7 ms)
-    ✓ deletes a vehicle (30 ms)
-    ✓ increases quantity with a positive delta (restock) (9 ms)
-    ✓ decreases quantity with a negative delta (purchase) (7 ms)
-    ✓ throws when a purchase would make quantity negative (40 ms)
-    ✓ lists all created vehicles (31 ms)
+    ✓ returns undefined for a missing vehicle (1 ms)
+    ✓ updates only the provided fields (8 ms)
+    ✓ deletes a vehicle (11 ms)
+    ✓ increases quantity with a positive delta (restock) (10 ms)
+    ✓ decreases quantity with a negative delta (purchase) (9 ms)
+    ✓ throws when a purchase would make quantity negative (22 ms)
+    ✓ lists all created vehicles (8 ms)
 
------------------------|---------|----------|---------|---------|-----------------------------------
-File                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                 
------------------------|---------|----------|---------|---------|-----------------------------------
-All files              |   91.66 |    56.75 |    90.9 |   92.33 |                                   
- src                   |   77.77 |      100 |      25 |   77.77 |                                   
-  app.ts               |   77.77 |      100 |      25 |   77.77 | 13,21,27-28                       
- src/db                |   95.04 |    58.82 |     100 |    96.9 |                                   
-  connection.ts        |    92.3 |       50 |     100 |   95.83 | 16                                
-  userRepository.ts    |     100 |        0 |     100 |     100 | 11                                
-  vehicleRepository.ts |   95.08 |       70 |     100 |   96.61 | 61-62                             
- src/middleware        |   94.11 |       80 |     100 |   94.11 |                                   
-  auth.ts              |   94.11 |       80 |     100 |   94.11 | 28                                
- src/routes            |   88.65 |    52.08 |     100 |   88.65 |                                   
-  auth.ts              |   96.66 |    63.63 |     100 |   96.66 | 34                                
-  vehicles.ts          |   85.07 |    48.64 |     100 |   85.07 | 55,60,75,80,91,96,111,119,124,129 
- src/utils             |     100 |       75 |     100 |     100 |                                   
-  auth.ts              |     100 |       75 |     100 |     100 | 4                                 
-  validation.ts        |     100 |      100 |     100 |     100 |                                   
------------------------|---------|----------|---------|---------|-----------------------------------
-Test Suites: 3 passed, 3 total
-Tests:       35 passed, 35 total
+-----------------------|---------|----------|---------|---------|-------------------------------------
+File                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                   
+-----------------------|---------|----------|---------|---------|-------------------------------------
+All files              |   92.71 |    64.94 |   92.68 |   93.26 |                                     
+ src                   |      80 |      100 |      25 |      80 |                                     
+  app.ts               |      80 |      100 |      25 |      80 | 14,23,29-30                         
+ src/db                |   95.27 |    71.42 |     100 |   96.72 |                                     
+  connection.ts        |   90.62 |    42.85 |     100 |    93.1 | 16,69                               
+  orderRepository.ts   |     100 |      100 |     100 |     100 |                                     
+  userRepository.ts    |     100 |        0 |     100 |     100 | 11                                  
+  vehicleRepository.ts |   95.45 |       85 |     100 |   96.87 | 83-84                               
+ src/middleware        |   94.11 |       80 |     100 |   94.11 |                                     
+  auth.ts              |   94.11 |       80 |     100 |   94.11 | 28                                  
+ src/routes            |   90.67 |    60.34 |     100 |   90.67 |                                     
+  auth.ts              |   96.66 |    63.63 |     100 |   96.66 | 34                                  
+  orders.ts            |     100 |      100 |     100 |     100 |                                     
+  vehicles.ts          |   86.84 |    56.81 |     100 |   86.84 | 70,75,90,95,106,111,141,149,154,159 
+ src/utils             |     100 |    66.66 |     100 |     100 |                                     
+  auth.ts              |     100 |       75 |     100 |     100 | 4                                   
+  validation.ts        |     100 |       50 |     100 |     100 | 20                                  
+-----------------------|---------|----------|---------|---------|-------------------------------------
+Test Suites: 5 passed, 5 total
+Tests:       45 passed, 45 total
 Snapshots:   0 total
-Time:        4.582 s, estimated 7 s
+Time:        7.992 s
 Ran all test suites.

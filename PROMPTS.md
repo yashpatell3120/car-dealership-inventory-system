@@ -60,6 +60,49 @@ added `.env.example` and `.gitignore` files for both the backend and
 frontend, generated the test report file, and wrote this README and
 PROMPTS.md file, before packaging the final project for delivery.
 
+### Prompt 4
+> [User asked what new features could be added, given a menu of options]
+> "all"
+
+Claude implemented all three of the previously-proposed enhancements in one
+session:
+
+1. **Order history**: added an `orders` table (with a defensive migration
+   check for `image_url` on the vehicles table too), an `orderRepository.ts`
+   data layer, wired order creation into the existing purchase endpoint, and
+   added a new `GET /api/orders` route (own orders by default, `?all=true`
+   for admins). Wrote 5 new tests for this (`tests/orders.test.ts`).
+2. **Sorting + vehicle images**: added an `image_url` column, sort
+   parameters (`sortBy`, `sortOrder`) to both `GET /api/vehicles` and
+   `GET /api/vehicles/search`, with server-side allowlisting of sortable
+   fields to prevent SQL injection via the sort parameter. Wrote 5 new
+   tests (`tests/sorting.test.ts`). Updated the seed script with sample
+   image URLs, and updated the frontend: vehicle photos on cards, a sort
+   dropdown + direction toggle in the search bar, and an image URL field in
+   the admin add/edit form.
+3. **CI + deployment**: added `.github/workflows/ci.yml` (runs backend
+   tests+coverage+build and frontend build on every push/PR) and
+   `render.yaml` (a Render.com blueprint deploying the backend as a Node web
+   service with a persistent disk, and the frontend as a static site).
+   Claude also proactively updated the frontend's API client to read a
+   `VITE_API_URL` build-time variable, since the local dev proxy setup
+   wouldn't work once actually deployed — something not explicitly asked
+   for but necessary for the deployment config to function.
+
+Claude ran the full test suite (45/45 passing, ~93% coverage), rebuilt both
+the backend and frontend to confirm clean TypeScript compiles, and did a
+live smoke test of the new sort and image_url behavior against a running
+server before considering the work done.
+
+### Prompt 5
+> "Continue"
+
+Claude finished the remaining polish: reran the frontend build after the
+last client-side change, regenerated the test coverage report, updated
+README.md (new feature list, updated API table, a new CI/deployment
+section) and this file, added new git commits with AI co-author trailers
+for the new work, and repackaged the project for delivery.
+
 ---
 
 ## Summary of how AI was used
