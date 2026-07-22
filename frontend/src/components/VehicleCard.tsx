@@ -57,6 +57,17 @@ export default function VehicleCard({ vehicle, onPurchase, onRestock, onEdit, on
 
   return (
     <div className="group relative rounded-lg border border-graphite-700 bg-graphite-800 overflow-hidden transition-colors hover:border-amber-500/60">
+      {vehicle.image_url && (
+        <div className="h-40 w-full overflow-hidden bg-graphite-900">
+          <img
+            src={vehicle.image_url}
+            alt={`${vehicle.make} ${vehicle.model}`}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+          />
+        </div>
+      )}
+
       {/* top plate strip - signature element evoking a window sticker header */}
       <div className="flex items-center justify-between border-b border-graphite-700 bg-graphite-900/60 px-4 py-2">
         <span className="font-mono-num text-[11px] tracking-widest text-graphite-300">

@@ -15,6 +15,7 @@ export default function VehicleFormModal({ initial, onSubmit, onClose }: Props) 
   const [category, setCategory] = useState(initial?.category ?? '');
   const [price, setPrice] = useState(initial ? String(initial.price) : '');
   const [quantity, setQuantity] = useState(initial ? String(initial.quantity) : '');
+  const [imageUrl, setImageUrl] = useState(initial?.image_url ?? '');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -48,7 +49,14 @@ export default function VehicleFormModal({ initial, onSubmit, onClose }: Props) 
 
     setSubmitting(true);
     try {
-      await onSubmit({ make: make.trim(), model: model.trim(), category: category.trim(), price: priceNum, quantity: qtyNum });
+      await onSubmit({
+        make: make.trim(),
+        model: model.trim(),
+        category: category.trim(),
+        price: priceNum,
+        quantity: qtyNum,
+        image_url: imageUrl.trim() || undefined,
+      });
       onClose();
     } catch (err: any) {
       setError(err?.response?.data?.error ?? 'Something went wrong. Please try again.');
@@ -110,6 +118,18 @@ export default function VehicleFormModal({ initial, onSubmit, onClose }: Props) 
                 className="w-full rounded border border-graphite-600 bg-graphite-900 px-3 py-2 text-sm text-graphite-50 focus:border-amber-500"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[10px] uppercase tracking-widest text-graphite-500">
+              Image URL (optional)
+            </label>
+            <input
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="https://..."
+              className="w-full rounded border border-graphite-600 bg-graphite-900 px-3 py-2 text-sm text-graphite-50 placeholder-graphite-500 focus:border-amber-500"
+            />
           </div>
 
           {error && <p className="text-sm text-crimson-400">{error}</p>}
