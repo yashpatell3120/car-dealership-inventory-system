@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth';
 import vehicleRoutes from './routes/vehicles';
+import orderRoutes from './routes/orders';
 
 export function createApp(): Application {
   const app = express();
@@ -15,6 +16,7 @@ export function createApp(): Application {
 
   app.use('/api/auth', authRoutes);
   app.use('/api/vehicles', vehicleRoutes);
+  app.use('/api/orders', orderRoutes);
 
   // 404 handler
   app.use((_req: Request, res: Response) => {

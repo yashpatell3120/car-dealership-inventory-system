@@ -7,24 +7,37 @@ import {
   updateVehicle,
   deleteVehicle,
   adjustQuantity,
+  SortField,
+  SortOrder,
 } from '../db/vehicleRepository';
+import { createOrder } from '../db/orderRepository';
 import { requireAuth, requireAdmin, AuthenticatedRequest } from '../middleware/auth';
 import { vehicleSchema, vehicleUpdateSchema, quantitySchema } from '../utils/validation';
 
 const router = Router();
 
+const VALID_SORT_FIELDS: SortField[] = ['price', 'created_at', 'make', 'quantity'];
+
+function parseSort(query: any): { sortBy?: SortField; sortOrder?: SortOrder } {
+  const sortBy = VALID_SORT_FIELDS.includes(query.sortBy) ? (query.sortBy as SortField) : undefined;
+  const sortOrder = query.sortOrder === 'asc' ? 'asc' : query.sortOrder === 'desc' ? 'desc' : undefined;
+  return { sortBy, sortOrder };
+}
+
 // All vehicle routes require authentication.
 router.use(requireAuth);
 
-// GET /api/vehicles - list all vehicles
-router.get('/', (_req: AuthenticatedRequest, res: Response) => {
-  return res.status(200).json({ vehicles: listVehicles() });
+// GET /api/vehicles?sortBy=price&sortOrder=asc - list all vehicles
+router.get('/', (req: AuthenticatedRequest, res: Response) => {
+  const { sortBy, sortOrder } = parseSort(req.query);
+  return res.status(200).json({ vehicles: listVehicles(sortBy, sortOrder) });
 });
 
-// GET /api/vehicles/search?make=&model=&category=&minPrice=&maxPrice=
+// GET /api/vehicles/search?make=&model=&category=&minPrice=&maxPrice=&sortBy=&sortOrder=
 // NOTE: registered before the /:id route so "search" is never captured as an id param.
 router.get('/search', (req: AuthenticatedRequest, res: Response) => {
   const { make, model, category, minPrice, maxPrice } = req.query;
+  const { sortBy, sortOrder } = parseSort(req.query);
 
   const filters = {
     make: typeof make === 'string' ? make : undefined,
@@ -32,6 +45,8 @@ router.get('/search', (req: AuthenticatedRequest, res: Response) => {
     category: typeof category === 'string' ? category : undefined,
     minPrice: minPrice !== undefined ? Number(minPrice) : undefined,
     maxPrice: maxPrice !== undefined ? Number(maxPrice) : undefined,
+    sortBy,
+    sortOrder,
   };
 
   return res.status(200).json({ vehicles: searchVehicles(filters) });
@@ -103,6 +118,21 @@ router.post('/:id/purchase', (req: AuthenticatedRequest, res: Response) => {
 
   try {
     const vehicle = adjustQuantity(id, -parsed.data.quantity);
+
+    // Record this purchase in order history. We snapshot make/model/price at the
+    // moment of sale so history stays accurate even if the vehicle is later edited
+    // or deleted.
+    if (req.user) {
+      createOrder({
+        userId: req.user.userId,
+        vehicleId: existing.id,
+        quantity: parsed.data.quantity,
+        priceAtPurchase: existing.price,
+        make: existing.make,
+        model: existing.model,
+      });
+    }
+
     return res.status(200).json({ vehicle });
   } catch (err) {
     if (err instanceof Error && err.message === 'INSUFFICIENT_STOCK') {
