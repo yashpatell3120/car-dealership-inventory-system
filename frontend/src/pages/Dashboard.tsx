@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import type { Vehicle, SearchFilters } from '../types';
 import * as vehicleApi from '../api/vehicles';
@@ -93,6 +94,12 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <Link
+              to="/orders"
+              className="rounded border border-graphite-600 px-3 py-1.5 text-sm text-graphite-300 hover:bg-graphite-700"
+            >
+              My purchases
+            </Link>
             <div className="text-right text-sm">
               <div className="text-graphite-50">{user?.email}</div>
               <div className="font-mono-num text-[10px] uppercase tracking-widest text-amber-400">
