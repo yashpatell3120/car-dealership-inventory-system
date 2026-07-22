@@ -1,113 +1,157 @@
-# PROMPTS.md — My AI Chat History
+# PROMPTS.md — AI Chat History
 
-This is the log of the prompts I used while building this project with Claude
-(Anthropic's AI assistant). I'm including this because the kata brief asks for
-the full AI chat history, prompts included, in the root of the project.
+This document contains the prompt history of my interactions with Claude
+(Anthropic's AI assistant) while developing this project, as required in the
+AI Usage Policy section of the assignment brief. I am currently pursuing my
+M.Tech and used this kata as an opportunity to also get hands-on experience
+with AI-assisted development workflows, which is something I wanted to
+explore properly rather than just using it for autocomplete.
 
-I used Claude in an agentic coding session, meaning it had access to a real
-terminal and could actually install packages, write files, and run my tests
-— not just suggest code in a chat window.
+I used Claude in an agentic setup — it had terminal access and could
+install dependencies, execute my test suite, and run the actual build
+commands, rather than just generating code snippets for me to copy-paste
+and verify manually. This was useful because it meant the code I received
+had actually been validated (tests run, builds checked) before I saw the
+final output.
 
 ---
 
-### 1. First I just asked it to explain the assignment
+## Session 1: Requirement analysis
 
-I uploaded the kata PDF and asked:
-
+**Prompt:**
 > "Explain me the full project"
 
-Claude read through the brief and gave me back a summary of what was actually
-being asked — backend API, frontend SPA, the TDD requirement, the AI
-co-authorship rule, and the deliverables list. No code yet, just made sure I
-understood the scope before diving in.
+Before starting implementation, I uploaded the kata specification PDF and
+asked Claude to walk through the requirements with me. It broke down the
+brief into the major components — the REST API with authentication, the
+React frontend, the TDD process expectations (red-green-refactor pattern in
+commit history), and the AI-usage documentation requirements (co-author
+trailers, this file, and the "My AI Usage" section in README.md). This step
+was useful for making sure I had a clear mental model of scope before any
+code was written.
 
-### 2. Then I asked it to actually build it
+## Session 2: Full implementation
 
+**Prompt:**
 > "give me full project"
 
-This is where the real work started. Claude:
+This was the primary implementation session. The work was broken down into
+a backend phase and a frontend phase:
 
-- Checked what Node version was available and tested whether the built-in
-  `node:sqlite` module would work, so we wouldn't run into the usual
-  native-module install headaches you get with packages like better-sqlite3.
-- Built out the whole backend: Express + TypeScript, the database schema,
-  the user/vehicle data layer, JWT + bcrypt for auth, middleware for
-  protected/admin-only routes, and validation with zod.
-- Wrote the test suite (Jest + Supertest) — 35 tests covering registration,
-  login, all the vehicle CRUD stuff, search, purchase/restock, and making
-  sure non-admins get blocked from admin actions.
-- Actually ran the tests and found a TypeScript bug in how the SQLite
-  library's return type was being cast — fixed it, reran, all green.
-- Ran the build to make sure it actually compiles, then generated a
-  coverage report (came out around 92%).
-- Built the frontend with Vite, React, and Tailwind — went with a car
-  dealership "showroom" theme (dark background, amber accents) instead of
-  just using default styling.
-- Built the login/register/dashboard pages and all the components (vehicle
-  cards, search bar, the admin add/edit form).
-- Ran the frontend build and it threw about 15 errors related to
-  TypeScript's `verbatimModuleSyntax` setting (basically type-only imports
-  needed a different import syntax) — fixed all of them.
-- Seeded the database, started the server, and used curl to actually test
-  the login endpoint and confirm it returned a real token.
+**Backend (Node.js + TypeScript + Express):**
+- Evaluated database options and settled on Node's built-in `node:sqlite`
+  module (available from Node 22.5+) instead of a third-party binding like
+  `better-sqlite3`, to avoid native compilation dependencies while still
+  meeting the "not in-memory" requirement with a real, file-persisted
+  database.
+- Implemented the data access layer (repositories for users and vehicles),
+  authentication utilities (JWT signing/verification, bcrypt hashing), and
+  middleware for route protection (`requireAuth`) and role-based access
+  control (`requireAdmin`).
+- Wrote the test suite using Jest and Supertest — 35 test cases across unit
+  tests (repository layer) and integration tests (API routes), covering
+  registration/login validation, CRUD operations, search/filter logic, and
+  authorization boundaries.
+- Ran the suite, identified and resolved a TypeScript type-narrowing issue
+  in the SQLite repository (the driver's return type didn't structurally
+  match my domain interfaces, requiring an explicit cast through
+  `unknown`), then confirmed a clean `tsc` build and generated a coverage
+  report (~92% statement coverage).
 
-### 3. Continuing the build
+**Frontend (React + TypeScript + Vite + Tailwind CSS v4):**
+- Scaffolded the SPA and set up a custom design system (palette, typography
+  scale) rather than relying on default component styling, going with an
+  automotive/showroom visual theme suited to the domain.
+- Built the authentication context, protected routing, and the core pages
+  (Login, Register, Dashboard) along with reusable components for the
+  vehicle cards, search/filter bar, and the admin CRUD modal.
+- On running the production build, encountered ~15 compile errors related
+  to TypeScript's `verbatimModuleSyntax` compiler option (type-only imports
+  require the `import type` syntax under this setting) — resolved across
+  all affected files.
+- Seeded the database and performed a manual smoke test of the running
+  server using curl to validate the health check, login flow, and JWT
+  issuance end-to-end.
 
+## Session 3: Completion of deliverables
+
+**Prompt:**
 > "Continue"
 
-I'd cut it off mid-task last time, so I just said continue and it picked up
-where it left off — reran the frontend build to double check nothing broke,
-added the .env.example and .gitignore files, generated the test report, and
-wrote the README and this file, then packaged everything up.
+Continued from the previous session to finish the remaining deliverables —
+verified the frontend build was still clean, added environment
+configuration (`.env.example`) and `.gitignore` files for both services,
+generated the final test report, and authored the README (setup
+instructions, API reference, design rationale, and the mandatory AI Usage
+section) along with this file.
 
-### 4. Asked what I could add on top of the base requirements
+## Session 4: Feature extensions
 
-I asked what new features I could add to make the project stand out, and
-Claude gave me a list of ideas (order history, sorting, images, deployment
-setup, etc.). I said:
+I asked for suggestions on what additional features could be implemented
+beyond the base requirements to demonstrate a more complete understanding
+of the system, and after reviewing the options presented, requested:
 
 > "all"
 
-So it built all three of what I picked:
+Three extensions were implemented in this session:
 
-- **Order history** — added an orders table, hooked it up so every purchase
-  gets logged, and added a `/api/orders` endpoint so I can see my own
-  purchase history (and admins can see everyone's). Wrote 5 more tests for
-  this.
-- **Sorting + car photos** — added an image_url field to vehicles, and
-  sorting by price/make/stock/newest on the vehicle list and search.
-  Updated the seed data with sample photos. Wrote 5 more tests.
-- **CI + deployment config** — added a GitHub Actions workflow so tests run
-  automatically on every push, and a render.yaml file so I could deploy it
-  to Render.com if I wanted to. It also noticed on its own that the
-  frontend would need to know the real backend URL once deployed (since
-  the local proxy trick only works on localhost) and fixed that too.
+1. **Order/transaction history** — introduced an `orders` table (denormalized
+   with make/model/price at time of purchase, so historical records remain
+   accurate independent of later edits to the vehicle record), a
+   corresponding repository module, and a `GET /api/orders` endpoint with
+   role-aware behaviour (own history by default, full history via `?all=true`
+   for admin users). Added 5 additional test cases for this.
 
-Ran everything again after — 45 tests passing, both builds clean, tested
-the new sort/image stuff against a running server before calling it done.
+2. **Sorting and vehicle imagery** — added an `image_url` column (with a
+   migration guard for existing databases using `PRAGMA table_info`), and
+   `sortBy`/`sortOrder` query parameters on the listing and search
+   endpoints, with server-side validation against an allowlist of sortable
+   fields to prevent unsafe dynamic SQL construction. Added 5 further test
+   cases and updated the frontend accordingly (image rendering on cards,
+   sort controls in the filter bar, image URL field in the admin form).
 
-### 5. Wrapped up
+3. **CI/CD and deployment configuration** — added a GitHub Actions workflow
+   to run the test suite and both builds on every push/PR, and a
+   `render.yaml` blueprint for deployment to Render.com. It was also
+   flagged (without my having asked) that the frontend's API client would
+   need a configurable base URL for production, since the local
+   development proxy is not applicable outside `localhost` — this was
+   addressed via a `VITE_API_URL` build-time environment variable.
 
+Post-implementation, the full suite was re-run (45/45 passing, ~93%
+coverage), both services were rebuilt to confirm no regressions, and the
+new functionality was verified against a live server instance before
+concluding the session.
+
+## Session 5: Final documentation pass
+
+**Prompt:**
 > "Continue"
 
-Finished the leftover bits — rebuilt the frontend one more time, regenerated
-the test report, updated the README with the new features and deployment
-instructions, updated this file, and made the git commits for everything
-(with the AI co-author tag on each one like the brief asks for).
+Final cleanup pass — rebuilt the frontend after the last change to the API
+client, regenerated the coverage report, and updated the README and this
+file to reflect the extended feature set, along with the corresponding git
+commit history (each commit tagged with the required AI co-author trailer).
 
 ---
 
-## My honest take on using AI for this
+## Reflection
 
-Having an AI that could actually run my code instead of just writing it
-caught real bugs before I ever touched the project myself — I probably
-would've spent a while hunting down those TypeScript import errors on my
-own. It also meant I didn't have to just trust that the code worked; I got
-to see the actual test output and a live server responding to real
-requests.
+As someone from an academic background where AI tool usage is still
+somewhat new territory in terms of formal workflow integration, I found
+this a useful exercise in understanding where such tools genuinely add
+value versus where independent judgement is still required. The clearest
+benefit was verification — having the assistant actually execute the test
+suite and build pipeline rather than just producing code meant issues (the
+SQLite type-casting bug, the `verbatimModuleSyntax` import errors) were
+caught and resolved before I ever ran the project myself, which would
+otherwise have required my own debugging cycle.
 
-That said, I made sure I understood and reviewed the bigger decisions myself
-— things like how the database was structured, how the login/admin
-permissions worked, what the sort-by-URL-parameter needed to be locked down
-against (so someone couldn't sneak SQL into it). I didn't just accept
-whatever it built without checking it made sense.
+At the same time, I made a point of reviewing the architectural decisions
+critically rather than accepting them by default — for instance, the choice
+of `node:sqlite` over a third-party binding, the denormalization approach
+used for the orders table, and the allowlist-based approach to preventing
+SQL injection via the sort parameter. These are the kinds of design
+decisions I would be expected to justify independently in a viva or
+interview setting, so I made sure I understood the reasoning behind each
+one rather than treating the tool's output as a black box.
