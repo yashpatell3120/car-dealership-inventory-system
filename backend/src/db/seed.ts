@@ -18,15 +18,20 @@ async function seed() {
     console.log('Created regular user: user@dealership.com / UserPass123');
   }
 
+  function img(seed: string) {
+    // Deterministic placeholder photo per vehicle (no API key required).
+    return `https://picsum.photos/seed/${seed}/640/400`;
+  }
+
   const sampleVehicles = [
-    { make: 'Toyota', model: 'Camry', category: 'Sedan', price: 28500, quantity: 5 },
-    { make: 'Toyota', model: 'RAV4', category: 'SUV', price: 32900, quantity: 3 },
-    { make: 'Honda', model: 'Civic', category: 'Sedan', price: 24500, quantity: 7 },
-    { make: 'Ford', model: 'F-150', category: 'Truck', price: 45000, quantity: 2 },
-    { make: 'Tesla', model: 'Model 3', category: 'Electric', price: 41000, quantity: 4 },
-    { make: 'Chevrolet', model: 'Corvette', category: 'Sports', price: 68000, quantity: 0 },
-    { make: 'BMW', model: 'X5', category: 'SUV', price: 61500, quantity: 1 },
-    { make: 'Mazda', model: 'CX-5', category: 'SUV', price: 29800, quantity: 6 },
+    { make: 'Toyota', model: 'Camry', category: 'Sedan', price: 28500, quantity: 5, image_url: img('toyota-camry') },
+    { make: 'Toyota', model: 'RAV4', category: 'SUV', price: 32900, quantity: 3, image_url: img('toyota-rav4') },
+    { make: 'Honda', model: 'Civic', category: 'Sedan', price: 24500, quantity: 7, image_url: img('honda-civic') },
+    { make: 'Ford', model: 'F-150', category: 'Truck', price: 45000, quantity: 2, image_url: img('ford-f150') },
+    { make: 'Tesla', model: 'Model 3', category: 'Electric', price: 41000, quantity: 4, image_url: img('tesla-model3') },
+    { make: 'Chevrolet', model: 'Corvette', category: 'Sports', price: 68000, quantity: 0, image_url: img('chevy-corvette') },
+    { make: 'BMW', model: 'X5', category: 'SUV', price: 61500, quantity: 1, image_url: img('bmw-x5') },
+    { make: 'Mazda', model: 'CX-5', category: 'SUV', price: 29800, quantity: 6, image_url: img('mazda-cx5') },
   ];
 
   for (const v of sampleVehicles) {

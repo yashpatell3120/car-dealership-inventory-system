@@ -7,6 +7,7 @@ export interface Vehicle {
   category: string;
   price: number;
   quantity: number;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -17,7 +18,11 @@ export interface NewVehicle {
   category: string;
   price: number;
   quantity: number;
+  image_url?: string | null;
 }
+
+export type SortField = 'price' | 'created_at' | 'make' | 'quantity';
+export type SortOrder = 'asc' | 'desc';
 
 export interface VehicleSearchFilters {
   make?: string;
@@ -25,14 +30,31 @@ export interface VehicleSearchFilters {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
+  sortBy?: SortField;
+  sortOrder?: SortOrder;
+}
+
+const ALLOWED_SORT_FIELDS: SortField[] = ['price', 'created_at', 'make', 'quantity'];
+
+function buildOrderClause(sortBy?: SortField, sortOrder?: SortOrder): string {
+  const field = sortBy && ALLOWED_SORT_FIELDS.includes(sortBy) ? sortBy : 'created_at';
+  const order = sortOrder === 'asc' ? 'ASC' : 'DESC';
+  return `ORDER BY ${field} ${order}`;
 }
 
 export function createVehicle(data: NewVehicle): Vehicle {
   const db = getDb();
   const stmt = db.prepare(
-    'INSERT INTO vehicles (make, model, category, price, quantity) VALUES (?, ?, ?, ?, ?)'
+    'INSERT INTO vehicles (make, model, category, price, quantity, image_url) VALUES (?, ?, ?, ?, ?, ?)'
   );
-  const result = stmt.run(data.make, data.model, data.category, data.price, data.quantity);
+  const result = stmt.run(
+    data.make,
+    data.model,
+    data.category,
+    data.price,
+    data.quantity,
+    data.image_url ?? null
+  );
   return findVehicleById(Number(result.lastInsertRowid))!;
 }
 
@@ -42,9 +64,9 @@ export function findVehicleById(id: number): Vehicle | undefined {
   return stmt.get(id) as Vehicle | undefined;
 }
 
-export function listVehicles(): Vehicle[] {
+export function listVehicles(sortBy?: SortField, sortOrder?: SortOrder): Vehicle[] {
   const db = getDb();
-  const stmt = db.prepare('SELECT * FROM vehicles ORDER BY created_at DESC');
+  const stmt = db.prepare(`SELECT * FROM vehicles ${buildOrderClause(sortBy, sortOrder)}`);
   return stmt.all() as unknown as Vehicle[];
 }
 
@@ -75,7 +97,8 @@ export function searchVehicles(filters: VehicleSearchFilters): Vehicle[] {
   }
 
   const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
-  const stmt = db.prepare(`SELECT * FROM vehicles ${where} ORDER BY created_at DESC`);
+  const orderClause = buildOrderClause(filters.sortBy, filters.sortOrder);
+  const stmt = db.prepare(`SELECT * FROM vehicles ${where} ${orderClause}`);
   return stmt.all(...params) as unknown as Vehicle[];
 }
 
@@ -87,10 +110,18 @@ export function updateVehicle(id: number, data: Partial<NewVehicle>): Vehicle | 
   const db = getDb();
   const stmt = db.prepare(
     `UPDATE vehicles
-     SET make = ?, model = ?, category = ?, price = ?, quantity = ?, updated_at = datetime('now')
+     SET make = ?, model = ?, category = ?, price = ?, quantity = ?, image_url = ?, updated_at = datetime('now')
      WHERE id = ?`
   );
-  stmt.run(merged.make, merged.model, merged.category, merged.price, merged.quantity, id);
+  stmt.run(
+    merged.make,
+    merged.model,
+    merged.category,
+    merged.price,
+    merged.quantity,
+    merged.image_url ?? null,
+    id
+  );
   return findVehicleById(id);
 }
 

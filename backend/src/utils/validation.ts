@@ -17,6 +17,7 @@ export const vehicleSchema = z.object({
   category: z.string().min(1),
   price: z.number().nonnegative(),
   quantity: z.number().int().nonnegative(),
+  image_url: z.string().url().optional().or(z.literal('')).transform((v) => (v ? v : undefined)),
 });
 
 export const vehicleUpdateSchema = vehicleSchema.partial();
