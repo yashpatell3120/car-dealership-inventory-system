@@ -13,9 +13,13 @@ export interface Vehicle {
   category: string;
   price: number;
   quantity: number;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
 }
+
+export type SortField = 'price' | 'created_at' | 'make' | 'quantity';
+export type SortOrder = 'asc' | 'desc';
 
 export interface SearchFilters {
   make?: string;
@@ -23,4 +27,17 @@ export interface SearchFilters {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
+  sortBy?: SortField;
+  sortOrder?: SortOrder;
+}
+
+export interface Order {
+  id: number;
+  user_id: number;
+  vehicle_id: number;
+  quantity: number;
+  price_at_purchase: number;
+  make: string;
+  model: string;
+  created_at: string;
 }

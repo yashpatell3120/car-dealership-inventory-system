@@ -1,8 +1,11 @@
 import client from './client';
 import type { Vehicle, SearchFilters } from '../types';
 
-export async function listVehicles(): Promise<Vehicle[]> {
-  const res = await client.get<{ vehicles: Vehicle[] }>('/vehicles');
+export async function listVehicles(sortBy?: string, sortOrder?: string): Promise<Vehicle[]> {
+  const params: Record<string, string> = {};
+  if (sortBy) params.sortBy = sortBy;
+  if (sortOrder) params.sortOrder = sortOrder;
+  const res = await client.get<{ vehicles: Vehicle[] }>('/vehicles', { params });
   return res.data.vehicles;
 }
 
@@ -13,6 +16,8 @@ export async function searchVehicles(filters: SearchFilters): Promise<Vehicle[]>
   if (filters.category) params.category = filters.category;
   if (filters.minPrice !== undefined) params.minPrice = String(filters.minPrice);
   if (filters.maxPrice !== undefined) params.maxPrice = String(filters.maxPrice);
+  if (filters.sortBy) params.sortBy = filters.sortBy;
+  if (filters.sortOrder) params.sortOrder = filters.sortOrder;
 
   const res = await client.get<{ vehicles: Vehicle[] }>('/vehicles/search', { params });
   return res.data.vehicles;
@@ -24,6 +29,7 @@ export interface VehicleInput {
   category: string;
   price: number;
   quantity: number;
+  image_url?: string;
 }
 
 export async function createVehicle(data: VehicleInput): Promise<Vehicle> {
