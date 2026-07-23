@@ -6,7 +6,7 @@ import * as orderApi from '../api/orders';
 
 const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
-  currency: 'USD',
+  currency: 'INR',
   maximumFractionDigits: 0,
 });
 

@@ -98,7 +98,7 @@ export default function SearchFilterBar({ onSearch, onReset }: Props) {
         />
       </div>
       <div>
-        <label className="mb-1 block text-[10px] uppercase tracking-widest text-graphite-500">Min $</label>
+        <label className="mb-1 block text-[10px] uppercase tracking-widest text-graphite-500">Min ₹</label>
         <input
           type="number"
           value={minPrice}
@@ -108,7 +108,7 @@ export default function SearchFilterBar({ onSearch, onReset }: Props) {
         />
       </div>
       <div>
-        <label className="mb-1 block text-[10px] uppercase tracking-widest text-graphite-500">Max $</label>
+        <label className="mb-1 block text-[10px] uppercase tracking-widest text-graphite-500">Max ₹</label>
         <input
           type="number"
           value={maxPrice}

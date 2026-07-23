@@ -158,9 +158,7 @@ set at frontend build time.
 
 ## My AI Usage
 
-**Tools used:** Claude (Anthropic), used directly in an agentic coding session with
-file-system and terminal access.
-
+**Tools used:** Claude (Anthropic).
 **How I used it:**
 - I used Claude to scaffold the entire project end-to-end: the Express/TypeScript
   backend structure (routes, middleware, repository layer, validation schemas), the

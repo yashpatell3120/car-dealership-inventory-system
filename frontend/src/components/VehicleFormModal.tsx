@@ -101,7 +101,7 @@ export default function VehicleFormModal({ initial, onSubmit, onClose }: Props) 
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-[10px] uppercase tracking-widest text-graphite-500">Price ($)</label>
+              <label className="mb-1 block text-[10px] uppercase tracking-widest text-graphite-500">Price (₹)</label>
               <input
                 type="number"
                 value={price}
