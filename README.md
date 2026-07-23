@@ -207,8 +207,22 @@ deployment config to actually work.
 See [`TEST_REPORT.txt`](./TEST_REPORT.txt) for the latest full test run and coverage
 output (35/35 tests passing, ~92% statement coverage on the backend). Regenerate it
 anytime with `npm run test:coverage` in `backend/`.
-
 ## Screenshots
 
-_Add screenshots of the running application here (login screen, dashboard, admin
-add/edit forms) before submitting._
+### Login page
+![Login page](screenshots/1-Login.png)
+
+### Dashboard — Admin view
+![Admin dashboard](screenshots/2-Dashboard admin.png)
+
+### Add vehicle form (admin only)
+![Add vehicle form](screenshots/3-Add vehicle form.png)
+
+### My Purchases (order history)
+![Order history page](screenshots/4 Order History.png)
+
+### User registration page
+![User registration page](screenshots/5-User registration.png)
+
+### Dashboard — Regular user view
+![User dashboard](screenshots/6-User Dashboard.png)
