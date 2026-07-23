@@ -178,13 +178,6 @@ set at frontend build time.
 - I asked for a deliberate, non-templated visual design for the frontend (a
   "dealership showroom" aesthetic) rather than default Tailwind styling.
 
-**Reflection:** Using an agentic coding assistant that can install dependencies, run
-tests, and inspect real output (rather than just generate code from a prompt) caught
-real bugs before I ever ran the project myself — the type-import errors in particular
-would have been a tedious one-by-one fix cycle. The main thing I had to stay
-deliberate about was architecture decisions (e.g., the database approach, validation
-strategy, auth middleware layering) — I reviewed and directed those rather than
-accepting the first suggestion, since that's where judgment matters most.
 
 **Follow-up session:** After the initial build, I asked Claude to add three
 enhancements on top of the base kata requirements: an order/purchase history
