@@ -209,20 +209,21 @@ output (35/35 tests passing, ~92% statement coverage on the backend). Regenerate
 anytime with `npm run test:coverage` in `backend/`.
 ## Screenshots
 
+
 ### Login page
-![Login page](screenshots/1-Login.png)
+![Login page](screenshots/1-login.png)
 
 ### Dashboard — Admin view
-![Admin dashboard](screenshots/2-Dashboard admin.png)
+![Admin dashboard](screenshots/2-dashboard-admin.png)
 
 ### Add vehicle form (admin only)
-![Add vehicle form](screenshots/3-Add vehicle form.png)
+![Add vehicle form](screenshots/3-add-vehicle-form.png)
 
 ### My Purchases (order history)
-![Order history page](screenshots/4 Order History.png)
+![Order history page](screenshots/4-order-history.png)
 
 ### User registration page
-![User registration page](screenshots/5-User registration.png)
+![User registration page](screenshots/5-user-registration.png)
 
 ### Dashboard — Regular user view
-![User dashboard](screenshots/6-User Dashboard.png)
+![User dashboard](screenshots/6-user-dashboard.png)
